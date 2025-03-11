@@ -1,0 +1,70 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.services.imageservice.name }}
+  labels:
+    app : {{ .Values.services.imageservice.name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      project: {{ .Values.services.imageservice.name }}
+  template:
+    metadata:
+      labels:
+        project: {{ .Values.services.imageservice.name }}
+    spec:
+      containers:
+        - name : {{ .Values.services.imageservice.name }}
+          image: zheki4/imageservice:latest
+          ports:
+            - containerPort: {{ .Values.services.imageservice.port }}
+          env:
+          - name: CLIENT_HOST
+            value: {{ .Values.services.client.name | quote }}
+          - name: CLIENT_PORT
+            value: {{ .Values.services.client.port | quote }}
+          - name: SERVER_PORT
+            value: {{ .Values.services.imageservice.port | quote }}
+          - name: SERVER_HOST
+            value: {{ .Values.services.imageservice.name | quote }}
+          - name: KAFKA_PORT
+            value: {{ .Values.services.kafka.port | quote  }}
+          - name: KAFKA_HOST
+            valueFrom: 
+              configMapKeyRef: 
+                name: app-cm
+                key: KAFKA_HOST
+          - name: REDIS_HOST
+            value: {{ .Values.services.redis_image.name | quote }}
+          - name: REDIS_PORT
+            value: {{ .Values.services.redis_image.port | quote }}
+          - name: MONGO_DB
+            valueFrom: 
+              configMapKeyRef: 
+                name: app-cm
+                key: MONGO_DB
+          - name: MONGO_HOST
+            value: {{ .Values.services.mongo.name | quote }}
+          - name: MONGO_PORT
+            value: {{ .Values.services.mongo.port | quote }}
+          
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.services.imageservice.name }}
+  labels:
+    env  : prod
+    owner: ZhenyaShostak
+spec:
+  selector:
+    project: {{ .Values.services.imageservice.name }}    # Selecting PODS with those Labels
+  ports:
+    - name      : {{ .Values.services.imageservice.name }}
+      protocol  : TCP
+      port: {{ .Values.services.imageservice.port }}
+      targetPort: {{ .Values.services.imageservice.port }}
+  type: LoadBalancer

@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins-server
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+    networks:
+      - jenkins-network
+
+  jenkins-agent:
+    image: jenkins/inbound-agent
+    container_name: jenkins-agent
+    environment:
+      - JENKINS_URL=http://jenkins-server:8080
+      - JENKINS_AGENT_NAME=agent
+      - JENKINS_AGENT_WORKDIR=/home/jenkins/agent
+      - JENKINS_SECRET=c2042bc9238e255469691884e04b2eae4e8e3a9e3cf37c3ffacd4bd1a9c49ae5
+    volumes:
+      - agent_workdir:/home/jenkins/agent
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - jenkins
+    networks:
+      - jenkins-network
+
+  # dind:
+  #   image: docker:dind
+  #   container_name: dind
+  #   privileged: true
+  #   environment:
+  #     - DOCKER_TLS_CERTDIR=""
+  #   volumes:
+  #     - docker_volume:/var/lib/docker
+  #   networks:
+  #     - jenkins-network
+
+volumes:
+  jenkins_home:
+  agent_workdir:
+  # docker_volume:
+
+networks:
+  jenkins-network:

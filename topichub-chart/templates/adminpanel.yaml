@@ -1,0 +1,44 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.services.admin.name }}
+  labels:
+    app : {{ .Values.services.admin.name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      project: {{ .Values.services.admin.name }}
+  template:
+    metadata:
+      labels:
+        project: {{ .Values.services.admin.name }}
+    spec:
+      containers:
+        - name : {{ .Values.services.admin.name }}
+          image: zheki4/webforum-admin-front:latest
+          ports:
+            - containerPort: {{ .Values.services.admin.port }}
+          env:
+          - name: VITE_APP_BACKEND_ADDRESS
+            value: "localhost"
+          - name: VITE_APP_BACKEND_IMAGE
+            value: {{ .Values.services.admin.port | quote }}
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.services.admin.name }}
+  labels:
+    env  : prod
+    owner: ZhenyaShostak
+spec:
+  selector:
+    project: {{ .Values.services.admin.name }}    # Selecting PODS with those Labels
+  ports:
+    - name      : {{ .Values.services.admin.name }}
+      protocol  : TCP
+      port: {{ .Values.services.admin.port }}
+      targetPort: {{ .Values.services.admin.port }}
+  type: NodePort

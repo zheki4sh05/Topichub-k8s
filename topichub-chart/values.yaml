@@ -1,0 +1,31 @@
+replicaDbCount: 1
+services:
+  postgres:
+    name: postgres-service
+    port: 5432
+  kafka:
+    name: kafka-service
+    port: 9092
+    port2: 9093
+    node_port: 30092
+  webforum:
+    name: webforum-service
+    port: 8080
+  imageservice:
+    name: image-service
+    port: 8081
+  mongo:
+    name: mongo-service
+    port: 27017
+  redis_forum:
+    name: redis-forum-service
+    port: 6379
+  redis_image:
+    name: redis-image-service
+    port: 6380
+  client:
+    name: client-service
+    port: 5000
+  admin:
+    name: admin-service
+    port: 5001

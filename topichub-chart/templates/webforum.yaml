@@ -1,0 +1,95 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.services.webforum.name }}
+  labels:
+    app : {{ .Values.services.webforum.name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      project: {{ .Values.services.webforum.name }}
+  template:
+    metadata:
+      labels:
+        project: {{ .Values.services.webforum.name }}
+    spec:
+      containers:
+        - name : {{ .Values.services.webforum.name }}
+          image: zheki4/webforum:latest
+          ports:
+            - containerPort: {{ .Values.services.webforum.port }}
+          env:
+          - name: CLIENT_HOST
+            value: {{ .Values.services.client.name | quote }}
+          - name: CLIENT_PORT
+            value: {{ .Values.services.client.port | quote }}
+          - name: ADMIN_HOST
+            value: {{ .Values.services.admin.name | quote }}
+          - name: ADMIN_PORT
+            value: {{ .Values.services.admin.port | quote }}
+          - name: KAFKA_PORT
+            value: {{ .Values.services.kafka.port | quote  }}
+          - name: KAFKA_HOST
+            valueFrom: 
+              configMapKeyRef: 
+                name: app-cm
+                key: KAFKA_HOST
+          - name: REDIS_HOST
+            value: {{ .Values.services.redis_forum.name | quote }}
+          - name: REDIS_PORT
+            value: {{ .Values.services.redis_forum.port | quote }}
+          - name: IMAGE_SERVICE_URL
+            valueFrom: 
+              configMapKeyRef: 
+                name: app-cm
+                key: IMAGE_SERVICE_URL
+          - name: DB_URL
+            valueFrom: 
+              configMapKeyRef: 
+                name: app-cm
+                key: DB_URL
+          - name: DB_DRIVER
+            valueFrom: 
+              configMapKeyRef: 
+                name: app-cm
+                key: DB_DRIVER
+          - name: DB_NAME
+            valueFrom: 
+              configMapKeyRef: 
+                name: app-cm
+                key: DB_NAME
+          - name: DB_USERNAME
+            valueFrom: 
+              secretKeyRef:
+                name: secret-data
+                key: postgres_username
+          - name: DB_PASSWORD
+            valueFrom: 
+              secretKeyRef:
+                name: secret-data
+                key: postgres_pass
+          - name: SECRET_KEY
+            valueFrom: 
+              secretKeyRef:
+                name: secret-data
+                key: secret_key
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.services.webforum.name }}
+  labels:
+    env  : prod
+    owner: ZhenyaShostak
+spec:
+  selector:
+    project: {{ .Values.services.webforum.name }}    # Selecting PODS with those Labels
+  ports:
+    - name      : {{ .Values.services.webforum.name }}
+      protocol  : TCP
+      port: {{ .Values.services.webforum.port }}
+      targetPort: {{ .Values.services.webforum.port }}
+  type: LoadBalancer

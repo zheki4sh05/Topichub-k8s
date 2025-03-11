@@ -1,0 +1,45 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-mongo-deployment
+  labels:
+    app : {{ .Release.Name }}-mongo
+spec:
+  replicas: {{ .Values.replicaDbCount }}
+  selector:
+    matchLabels:
+      project: mongo
+  template:
+    metadata:
+      labels:
+        project: mongo
+    spec:
+      containers:
+        - name : {{ .Values.services.mongo.name }}
+          image: mongo:latest
+          ports:
+            - containerPort: {{ .Values.services.mongo.port }}
+          volumeMounts:
+          - name: mongo-storage
+            mountPath: /var/lib/mongodb/data  
+      volumes:
+      - name: mongo-storage
+        persistentVolumeClaim:
+          claimName: mongo-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.services.mongo.name }}
+  labels:
+    env  : prod
+    owner: ZhenyaShostak
+spec:
+  selector:
+    project: mongo   
+  ports:
+    - name      : {{ .Release.Name }}-mongo-listener
+      protocol  : TCP
+      port: {{ .Values.services.mongo.port }}
+      targetPort: {{ .Values.services.mongo.port }}
+  type: ClusterIP

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-cm
+data:
+   DB_URL: "jdbc:postgresql://postgres-service.default.svc.cluster.local:5432/web_forum"
+   KAFKA_HOST: "kafka-service.default.svc.cluster.local"
+   DB_DRIVER: "org.postgresql.Driver"
+   DB_NAME: "web_forum"
+   IMAGE_SERVICE_URL: "http://image-service.default.svc.cluster.local:8081/api/v1/image"
+   MONGO_DB: "imagedb"

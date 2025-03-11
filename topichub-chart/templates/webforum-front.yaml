@@ -1,0 +1,44 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.services.client.name }}
+  labels:
+    app : {{ .Values.services.client.name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      project: {{ .Values.services.client.name }}
+  template:
+    metadata:
+      labels:
+        project: {{ .Values.services.client.name }}
+    spec:
+      containers:
+        - name : {{ .Values.services.client.name }}
+          image: zheki4/webforum-front:latest
+          ports:
+            - containerPort: {{ .Values.services.client.port }}
+          env:
+          - name: VITE_APP_BACKEND_ADDRESS
+            value: "localhost"
+          - name: VITE_APP_BACKEND_IMAGE
+            value: {{ .Values.services.client.port | quote }}
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.services.client.name }}
+  labels:
+    env  : prod
+    owner: ZhenyaShostak
+spec:
+  selector:
+    project: {{ .Values.services.client.name }}    # Selecting PODS with those Labels
+  ports:
+    - name      : {{ .Values.services.client.name }}
+      protocol  : TCP
+      port: {{ .Values.services.client.port }}
+      targetPort: {{ .Values.services.client.port }}
+  type: NodePort
