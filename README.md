@@ -1,10 +1,10 @@
 # TopicHub-web-forum deploy guide in Minikube
 
-Links for all project's repositories:
-https://github.com/zheki4sh05/TopicHub-webforum
-https://github.com/zheki4sh05/TopicHub-ImageService
-https://github.com/zheki4sh05/TopicHub-frontend
-https://github.com/zheki4sh05/TopicHub-frontend-admin
+Links for all project's repositories: <br>
+https://github.com/zheki4sh05/TopicHub-webforum <br>
+https://github.com/zheki4sh05/TopicHub-ImageService <br>
+https://github.com/zheki4sh05/TopicHub-frontend <br>
+https://github.com/zheki4sh05/TopicHub-frontend-admin <br>
 
 ### Installation
 Clone project:
