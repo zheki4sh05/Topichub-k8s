@@ -36,7 +36,10 @@ spec:
                 name: app-cm
                 key: KAFKA_HOST
           - name: REDIS_HOST
-            value: {{ .Values.services.redis_forum.name | quote }}
+            valueFrom: 
+              configMapKeyRef: 
+                name: app-cm
+                key: REDIS_FORUM_HOST
           - name: REDIS_PORT
             value: {{ .Values.services.redis_forum.port | quote }}
           - name: IMAGE_SERVICE_URL
@@ -74,6 +77,14 @@ spec:
               secretKeyRef:
                 name: secret-data
                 key: secret_key
+          - name: ADMIN_HOST
+            valueFrom: 
+                configMapKeyRef: 
+                  name: app-cm
+                  key: ADMIN_SERVER_HOST
+          - name: ADMIN_PORT
+            value: {{ .Values.services.adminserver.port | quote }}
+
 
 ---
 

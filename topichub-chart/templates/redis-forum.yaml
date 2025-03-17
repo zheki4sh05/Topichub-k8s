@@ -1,0 +1,38 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-redis-forum-deployment
+  labels:
+    app : {{ .Release.Name }}-redis-forum
+spec:
+  replicas: {{ .Values.replicaDbCount }}
+  selector:
+    matchLabels:
+      project: redis-forum
+  template:
+    metadata:
+      labels:
+        project: redis-forum
+    spec:
+      containers:
+        - name : {{ .Values.services.redis_forum.name }}
+          image: redis:latest
+          ports:
+            - containerPort: {{ .Values.services.redis_forum.port }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.services.redis_forum.name }}
+  labels:
+    env  : prod
+    owner: ZhenyaShostak
+spec:
+  selector:
+    project: redis-forum   
+  ports:
+    - name      : {{ .Release.Name }}-redis-forum-listener
+      protocol  : TCP
+      port: {{ .Values.services.redis_forum.port }}
+      targetPort: {{ .Values.services.redis_forum.port }}
+  type: ClusterIP

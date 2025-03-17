@@ -5,7 +5,9 @@ metadata:
 data:
    DB_URL: "jdbc:postgresql://postgres-service.default.svc.cluster.local:5432/web_forum"
    KAFKA_HOST: "kafka-service.default.svc.cluster.local"
+   REDIS_FORUM_HOST: "redis-forum-service.default.svc.cluster.local"
    DB_DRIVER: "org.postgresql.Driver"
    DB_NAME: "web_forum"
    IMAGE_SERVICE_URL: "http://image-service.default.svc.cluster.local:8081/api/v1/image"
    MONGO_DB: "imagedb"
+   ADMIN_SERVER_HOST: "admin-server.default.svc.cluster.local"

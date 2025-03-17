@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name : {{ .Values.services.adminserver.name }}
-          image: zheki4/adminserver:latest
+          image: zheki4/webforum-admin-server:latest
           ports:
             - containerPort: {{ .Values.services.adminserver.port }}
           env:
