@@ -23,7 +23,9 @@ spec:
           - name: VITE_APP_BACKEND_ADDRESS
             value: "localhost"
           - name: VITE_APP_BACKEND_IMAGE
-            value: {{ .Values.services.client.port | quote }}
+            value: "localhost"
+          - name: VITE_APP_ADMIN_ADDRESS
+            value: "localhost"
 ---
 
 apiVersion: v1

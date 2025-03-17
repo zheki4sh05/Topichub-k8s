@@ -29,3 +29,6 @@ services:
   admin:
     name: admin-service
     port: 5001
+  adminserver:
+    name: admin-server
+    port: 8085

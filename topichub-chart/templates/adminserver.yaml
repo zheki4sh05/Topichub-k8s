@@ -1,0 +1,53 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.services.adminserver.name }}
+  labels:
+    app : {{ .Values.services.adminserver.name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      project: {{ .Values.services.adminserver.name }}
+  template:
+    metadata:
+      labels:
+        project: {{ .Values.services.adminserver.name }}
+    spec:
+      containers:
+        - name : {{ .Values.services.adminserver.name }}
+          image: zheki4/adminserver:latest
+          ports:
+            - containerPort: {{ .Values.services.adminserver.port }}
+          env:
+            - name: SERVER_PORT
+              value: {{ .Values.services.adminserver.port | quote }}
+            - name: USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: secret-data
+                  key: admin_server_username
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secret-data
+                  key: admin_server_password
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.services.adminserver.name }}
+  labels:
+    env  : prod
+    owner: ZhenyaShostak
+spec:
+  selector:
+    project: {{ .Values.services.adminserver.name }}
+  ports:
+    - name      : {{ .Values.services.adminserver.name }}
+      protocol  : TCP
+      port: {{ .Values.services.adminserver.port }}
+      targetPort: {{ .Values.services.adminserver.port }}
+  type: LoadBalancer
